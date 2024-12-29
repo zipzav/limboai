@@ -15,7 +15,7 @@ on:
         type: boolean
         default: false
       debug-symbols:
-        description: Build with debug symbols
+        description: All builds with debug symbols
         type: boolean
         default: false
 
@@ -34,7 +34,7 @@ on:
         type: boolean
         default: false
       debug-symbols:
-        description: Build with debug symbols
+        description: All builds with debug symbols
         type: boolean
         default: false
 
@@ -43,7 +43,6 @@ env:
   SCONS_CACHE_LIMIT: 4096
   SCONSFLAGS: dev_build=no verbose=yes
   EM_VERSION: 3.1.45
-  EM_CACHE_FOLDER: "emsdk-cache"
   GODOT_VERSION: 4.3-stable
 
 jobs:
@@ -276,21 +275,14 @@ jobs:
           python-version: "3.x"
           architecture: "x64"
 
-      - name: Set up Emscripten cache
-        if: matrix.opts.platform == 'web'
-        uses: actions/cache@v4
-        with:
-          path: ${{env.EM_CACHE_FOLDER}}
-          key: ${{env.EM_VERSION}}-${{runner.os}}-libs
-
-      - name: Set up Emscripten
+      - name: Set up Emscripten (Web)
         if: matrix.opts.platform == 'web'
         uses: mymindstorm/setup-emsdk@v14
         with:
           version: ${{env.EM_VERSION}}
-          actions-cache-folder: ${{env.EM_CACHE_FOLDER}}
+          no-cache: true
 
-      - name: Verify Emscripten setup
+      - name: Verify Emscripten setup (Web)
         if: matrix.opts.platform == 'web'
         run: |
           emcc -v
@@ -303,7 +295,7 @@ jobs:
           python --version
           scons --version
 
-      - name: Set up Java 17
+      - name: Set up Java 17 (Android)
         if: matrix.opts.platform == 'android'
         uses: actions/setup-java@v4
         with:
@@ -317,9 +309,13 @@ jobs:
           ndk-version: r23c
           link-to-sdk: true
 
-      - name: Set up MSVC problem matcher on Windows
+      - name: Set up MSVC problem matcher (Windows)
         if: matrix.opts.platform == 'windows'
-        uses: ammaraskar/msvc-problem-matcher@master
+        uses: ammaraskar/msvc-problem-matcher@1ebcb382869bfdc2cc645e8a2a43b6d319ea1cc0 # 0.3.0
+
+      - name: Set up GCC problem matcher (Linux)
+        if: matrix.opts.platform == 'linux'
+        uses: ammaraskar/gcc-problem-matcher@0f9c86f9e693db67dacf53986e1674de5f2e5f28 # 0.3.0
 
       - name: Set up scons cache
         if: inputs.test-build # ! Only cache test/PR builds
