@@ -41,7 +41,7 @@ on:
 # Global Settings
 env:
   SCONS_CACHE_LIMIT: 4096
-  SCONSFLAGS: use_mingw=yes dev_build=no
+  SCONSFLAGS: dev_build=no verbose=yes
   EM_VERSION: 3.1.45
   EM_CACHE_FOLDER: "emsdk-cache"
   GODOT_VERSION: 4.3-stable
@@ -61,6 +61,8 @@ jobs:
             platform: linux
             target: template_release
             arch: x86_64
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.linux.template_release.x86_64.so
             should-build: true
 
           - name: 🐧 Linux (x86_64, debug)
@@ -68,6 +70,8 @@ jobs:
             platform: linux
             target: editor
             arch: x86_64
+            debug-symbols: true
+            bin: liblimboai.linux.editor.x86_64.so
             should-build: true
 
           - name: 🪟 Windows (x86_64, release)
@@ -75,6 +79,8 @@ jobs:
             platform: windows
             target: template_release
             arch: x86_64
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.windows.template_release.x86_64.dll
             should-build: true
 
           - name: 🪟 Windows (x86_64, debug)
@@ -82,6 +88,8 @@ jobs:
             platform: windows
             target: editor
             arch: x86_64
+            debug-symbols: true
+            bin: liblimboai.windows.editor.x86_64.dll
             should-build: true
 
           - name: 🍎 macOS (universal, release)
@@ -89,6 +97,8 @@ jobs:
             platform: macos
             target: template_release
             arch: universal
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.macos.template_release
             should-build: true
 
           - name: 🍎 macOS (universal, debug)
@@ -96,6 +106,8 @@ jobs:
             platform: macos
             target: editor
             arch: universal
+            debug-symbols: true
+            bin: liblimboai.macos.editor
             should-build: true
 
           - name: 🌐 Web (wasm32, release)
@@ -103,6 +115,8 @@ jobs:
             platform: web
             target: template_release
             arch: wasm32
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.web.template_release.wasm32.wasm
             should-build: ${{ !inputs.test-build }}
 
           - name: 🌐 Web (wasm32, debug)
@@ -110,6 +124,8 @@ jobs:
             platform: web
             target: template_debug
             arch: wasm32
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.web.template_debug.wasm32.wasm
             should-build: ${{ !inputs.test-build }}
 
           - name: 🤖 Android (arm64, release)
@@ -117,6 +133,8 @@ jobs:
             platform: android
             target: template_release
             arch: arm64
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.android.template_release.arm64.so
             should-build: ${{ !inputs.test-build }}
 
           - name: 🤖 Android (arm64, debug)
@@ -124,6 +142,8 @@ jobs:
             platform: android
             target: template_debug
             arch: arm64
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.android.template_debug.arm64.so
             should-build: ${{ !inputs.test-build }}
 
           - name: 🤖 Android (arm32, release)
@@ -131,6 +151,8 @@ jobs:
             platform: android
             target: template_release
             arch: arm32
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.android.template_release.arm32.so
             should-build: ${{ !inputs.test-build }}
 
           - name: 🤖 Android (arm32, debug)
@@ -138,6 +160,8 @@ jobs:
             platform: android
             target: template_debug
             arch: arm32
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.android.template_debug.arm32.so
             should-build: ${{ !inputs.test-build }}
 
           - name: 🤖 Android (x86_64, release)
@@ -145,6 +169,8 @@ jobs:
             platform: android
             target: template_release
             arch: x86_64
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.android.template_release.x86_64.so
             should-build: ${{ !inputs.test-build }}
 
           - name: 🤖 Android (x86_64, debug)
@@ -152,6 +178,8 @@ jobs:
             platform: android
             target: template_debug
             arch: x86_64
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.android.template_debug.x86_64.so
             should-build: ${{ !inputs.test-build }}
 
           - name: 🤖 Android (x86_32, release)
@@ -159,6 +187,8 @@ jobs:
             platform: android
             target: template_release
             arch: x86_32
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.android.template_release.x86_32.so
             should-build: ${{ !inputs.test-build }}
 
           - name: 🤖 Android (x86_32, debug)
@@ -166,6 +196,8 @@ jobs:
             platform: android
             target: template_debug
             arch: x86_32
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.android.template_debug.x86_32.so
             should-build: ${{ !inputs.test-build }}
 
           - name: 🍏 iOS (arm64, release)
@@ -173,6 +205,8 @@ jobs:
             platform: ios
             target: template_release
             arch: arm64
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.ios.template_release.arm64.dylib
             should-build: ${{ !inputs.test-build }}
 
           - name: 🍏 iOS (arm64, debug)
@@ -180,6 +214,8 @@ jobs:
             platform: ios
             target: template_debug
             arch: arm64
+            debug-symbols: ${{ inputs.debug-symbols }}
+            bin: liblimboai.ios.template_debug.arm64.dylib
             should-build: ${{ !inputs.test-build }}
 
           - name: 🍏 iOS (simulator, release)
@@ -187,7 +223,9 @@ jobs:
             platform: ios
             target: template_release
             arch: universal
+            debug-symbols: ${{ inputs.debug-symbols }}
             scons-flags: ios_simulator=yes
+            bin: liblimboai.ios.template_release.universal.simulator.dylib
             should-build: ${{ !inputs.test-build }}
 
           - name: 🍏 iOS (simulator, debug)
@@ -195,14 +233,13 @@ jobs:
             platform: ios
             target: template_debug
             arch: universal
+            debug-symbols: ${{ inputs.debug-symbols }}
             scons-flags: ios_simulator=yes
+            bin: liblimboai.ios.template_debug.universal.simulator.dylib
             should-build: ${{ !inputs.test-build }}
 
         exclude:
           - { opts: { should-build: false } }
-
-    env:
-      BIN: liblimboai.${{matrix.opts.platform}}.${{matrix.opts.target}}.${{matrix.opts.arch}}
 
     steps:
       - name: Clone LimboAI module
@@ -289,20 +326,43 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{github.workspace}}/.scons_cache/
-          key: ${{env.BIN}}-${{inputs.debug-symbols}}-${{inputs.godot-cpp-ref}}-${{inputs.limboai-ref}}-${{env.LIMBOAI_VERSION}}
+          key: ${{matrix.opts.bin}}-${{matrix.opts.debug-symbols}}-${{inputs.godot-cpp-ref}}-${{inputs.limboai-ref}}-${{env.LIMBOAI_VERSION}}
           restore-keys: |
-            ${{env.BIN}}-${{inputs.debug-symbols}}-${{inputs.godot-cpp-ref}}-${{inputs.limboai-ref}}-${{env.LIMBOAI_VERSION}}
-            ${{env.BIN}}-${{inputs.debug-symbols}}-${{inputs.godot-cpp-ref}}-${{inputs.limboai-ref}}
-            ${{env.BIN}}-${{inputs.debug-symbols}}-${{inputs.godot-cpp-ref}}
+            ${{matrix.opts.bin}}-${{matrix.opts.debug-symbols}}-${{inputs.godot-cpp-ref}}-${{inputs.limboai-ref}}-${{env.LIMBOAI_VERSION}}
+            ${{matrix.opts.bin}}-${{matrix.opts.debug-symbols}}-${{inputs.godot-cpp-ref}}-${{inputs.limboai-ref}}
+            ${{matrix.opts.bin}}-${{matrix.opts.debug-symbols}}-${{inputs.godot-cpp-ref}}
 
       - name: Compilation
         shell: bash
         env:
           SCONS_CACHE: ${{github.workspace}}/.scons_cache/
-          DEBUG_FLAGS: ${{ inputs.debug-symbols && 'debug_symbols=yes symbols_visibility=visible' || 'debug_symbols=no' }}
+          DEBUG_FLAGS: ${{ matrix.opts.debug-symbols && 'debug_symbols=yes symbols_visibility=visible' || 'debug_symbols=no' }}
         run: |
           PATH=${GITHUB_WORKSPACE}/buildroot/bin:$PATH
           scons platform=${{matrix.opts.platform}} target=${{matrix.opts.target}} arch=${{matrix.opts.arch}} ${{env.DEBUG_FLAGS}} ${{matrix.opts.scons-flags}} ${{env.SCONSFLAGS}}
+
+      - name: Split debug symbols (Linux)
+        if: matrix.opts.debug-symbols && matrix.opts.platform == 'linux'
+        shell: bash
+        run: |
+          cd demo/addons/limboai/bin/
+          objcopy --only-keep-debug ${{matrix.opts.bin}} ${{matrix.opts.bin}}.debug
+          objcopy --add-gnu-debuglink ${{matrix.opts.bin}}.debug ${{matrix.opts.bin}}
+          strip --strip-debug ${{matrix.opts.bin}}
+          readelf --debug-dump=links ${{matrix.opts.bin}}
+          nm ${{matrix.opts.bin}}
+
+      - name: Split debug symbols (macOS & iOS)
+        if: matrix.opts.debug-symbols && (matrix.opts.platform == 'macos' || matrix.opts.platform == 'ios')
+        shell: bash
+        run: |
+          cd demo/addons/limboai/bin/
+          if [ "${{matrix.opts.platform}}" == "macos" ]; then
+            cd liblimboai.*.framework/
+          fi
+          dsymutil ${{matrix.opts.bin}}
+          strip -x ${{matrix.opts.bin}}
+          nm ${{matrix.opts.bin}}
 
       - name: Prepare artifact
         shell: bash
@@ -313,18 +373,30 @@ jobs:
           cp {README,LICENSE,LOGO_LICENSE}.md out/addons/limboai/
           cp -R demo/demo/ out/demo/
           cp demo/LICENSE_ASSETS.md out/demo/
-          rm -f out/addons/limboai/bin/*.{exp,lib,pdb}
+          rm -f out/addons/limboai/bin/*.{exp,lib}
           echo "${LIMBOAI_VERSION}" > out/addons/limboai/version.txt
           echo "---"
           ls -R out/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
-        env:
-          NAME: tmp-gdextension.${{matrix.opts.platform}}.${{matrix.opts.target}}.${{matrix.opts.arch}}
         with:
-          name: ${{ env.NAME }}
-          path: out/*
+          name: tmp-gdextension.${{matrix.opts.platform}}.${{matrix.opts.target}}.${{matrix.opts.arch}}
+          path: |
+            out/*
+            !out/**/*.debug
+            !out/**/*.pdb
+            !out/**/*.dSYM
+
+      - name: Upload debug symbols
+        if: matrix.opts.debug-symbols
+        uses: actions/upload-artifact@v4
+        with:
+          name: tmp-gdextension-symbols.${{matrix.opts.platform}}.${{matrix.opts.target}}.${{matrix.opts.arch}}
+          path: |
+            out/**/*.debug
+            out/**/*.pdb
+            out/**/*.dSYM
 
   package-extension:
     name: 📦 Package extension
@@ -337,6 +409,13 @@ jobs:
         with:
           name: ${{needs.gdextension.outputs.name-prefix}}
           pattern: tmp-gdextension.*
+          delete-merged: true
+
+      - name: Merge debug symbols artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: ${{needs.gdextension.outputs.name-prefix}}.debug-symbols
+          pattern: tmp-gdextension-symbols.*
           delete-merged: true
 
       - name: Download artifact
