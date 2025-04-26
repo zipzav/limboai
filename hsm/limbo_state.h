@@ -28,6 +28,8 @@
 #include <godot_cpp/templates/hash_map.hpp>
 #endif // LIMBOAI_GDEXTENSION
 
+#include "modules/datadrivenlogic/actions/action.h"
+
 class LimboHSM;
 
 class LimboState : public Node {
@@ -41,6 +43,8 @@ private:
 	Ref<Blackboard> blackboard;
 	HashMap<StringName, Callable> handlers;
 	Callable guard_callable;
+	TypedArray<Action> on_enter_actions;
+	TypedArray<Action> on_exit_actions;
 
 	Ref<BlackboardPlan> _get_parent_scope_plan() const;
 
@@ -98,6 +102,9 @@ public:
 
 	void set_guard(const Callable &p_guard_callable);
 	void clear_guard();
+
+	void set_on_enter_actions(const TypedArray<Action> &on_enter_actions);
+	TypedArray<Action> get_on_enter_actions() const { return on_enter_actions; }
 
 	LimboState();
 };

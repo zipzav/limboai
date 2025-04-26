@@ -203,6 +203,10 @@ void LimboState::_notification(int p_what) {
 	}
 }
 
+void LimboState::set_on_enter_actions(const TypedArray<Action> &p_on_enter_actions) {
+	on_enter_actions = p_on_enter_actions;
+}
+
 void LimboState::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("restart"), &LimboState::restart);
 	ClassDB::bind_method(D_METHOD("get_root"), &LimboState::get_root);
@@ -226,15 +230,20 @@ void LimboState::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("_get_parent_scope_plan"), &LimboState::_get_parent_scope_plan);
 
+	ClassDB::bind_method(D_METHOD("set_on_enter_actions"), &LimboState::set_on_enter_actions);
+	ClassDB::bind_method(D_METHOD("get_on_enter_actions"), &LimboState::get_on_enter_actions);
+
 	GDVIRTUAL_BIND(_setup);
 	GDVIRTUAL_BIND(_enter);
 	GDVIRTUAL_BIND(_exit);
 	GDVIRTUAL_BIND(_update, "delta");
 
-	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "EVENT_FINISHED", PROPERTY_HINT_NONE, "", 0), "", "event_finished");
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "agent", PROPERTY_HINT_RESOURCE_TYPE, "Node", 0), "set_agent", "get_agent");
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "blackboard", PROPERTY_HINT_RESOURCE_TYPE, "Blackboard", 0), "", "get_blackboard");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "EVENT_FINISHED", PROPERTY_HINT_NONE, ""), "", "event_finished");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "agent", PROPERTY_HINT_RESOURCE_TYPE, "Node"), "set_agent", "get_agent");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "blackboard", PROPERTY_HINT_RESOURCE_TYPE, "Blackboard"), "", "get_blackboard");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "blackboard_plan", PROPERTY_HINT_RESOURCE_TYPE, "BlackboardPlan", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_ALWAYS_DUPLICATE), "set_blackboard_plan", "get_blackboard_plan");
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "on_enter_actions", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("Action")), "set_on_enter_actions", "get_on_enter_actions");
+
 
 	ADD_SIGNAL(MethodInfo("setup"));
 	ADD_SIGNAL(MethodInfo("entered"));
