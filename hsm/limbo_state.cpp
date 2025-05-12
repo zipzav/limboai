@@ -11,6 +11,8 @@
 
 #include "limbo_state.h"
 
+#include "scene/main/window.h"
+
 #ifdef LIMBOAI_MODULE
 #include "core/config/engine.h"
 #endif // LIMBOAI_MODULE
@@ -77,6 +79,14 @@ LimboState *LimboState::named(const String &p_name) {
 void LimboState::_enter() {
 	active = true;
 	GDVIRTUAL_CALL(_enter);
+
+	for (Variant action : on_enter_actions)
+	{
+		Ref<ExecutionContext> context(memnew(ExecutionContext));
+		context->set_root(get_tree()->get_root()->get_child(0));
+		Object::cast_to<Action>(action)->execute(context);
+	}
+
 	emit_signal(LW_NAME(entered));
 }
 
@@ -85,6 +95,18 @@ void LimboState::_exit() {
 		return;
 	}
 	GDVIRTUAL_CALL(_exit);
+
+	for (Variant action : on_enter_actions)
+	{
+		Action* action_ptr = Object::cast_to<Action>(action);
+		if(!action_ptr->_is_revertible())
+			continue;
+
+		Ref<ExecutionContext> context(memnew(ExecutionContext));
+		context->set_root(get_tree()->get_root()->get_child(0));
+		action_ptr->revert(context);
+	}
+
 	emit_signal(LW_NAME(exited));
 	active = false;
 }
@@ -203,8 +225,12 @@ void LimboState::_notification(int p_what) {
 	}
 }
 
-void LimboState::set_on_enter_actions(const TypedArray<Action> &p_on_enter_actions) {
-	on_enter_actions = p_on_enter_actions;
+void LimboState::set_on_enter_actions(const TypedArray<Action> &new_actions) {
+	on_enter_actions = new_actions;
+}
+
+void LimboState::set_on_exit_actions(const TypedArray<Action> &new_actions) {
+	on_exit_actions = new_actions;
 }
 
 void LimboState::_bind_methods() {
@@ -233,6 +259,9 @@ void LimboState::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_on_enter_actions"), &LimboState::set_on_enter_actions);
 	ClassDB::bind_method(D_METHOD("get_on_enter_actions"), &LimboState::get_on_enter_actions);
 
+	ClassDB::bind_method(D_METHOD("set_on_exit_actions"), &LimboState::set_on_exit_actions);
+	ClassDB::bind_method(D_METHOD("get_on_exit_actions"), &LimboState::get_on_exit_actions);
+
 	GDVIRTUAL_BIND(_setup);
 	GDVIRTUAL_BIND(_enter);
 	GDVIRTUAL_BIND(_exit);
@@ -243,6 +272,7 @@ void LimboState::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "blackboard", PROPERTY_HINT_RESOURCE_TYPE, "Blackboard"), "", "get_blackboard");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "blackboard_plan", PROPERTY_HINT_RESOURCE_TYPE, "BlackboardPlan", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_ALWAYS_DUPLICATE), "set_blackboard_plan", "get_blackboard_plan");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "on_enter_actions", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("Action")), "set_on_enter_actions", "get_on_enter_actions");
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "on_exit_actions", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("Action")), "set_on_exit_actions", "get_on_exit_actions");
 
 
 	ADD_SIGNAL(MethodInfo("setup"));

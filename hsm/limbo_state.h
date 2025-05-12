@@ -103,8 +103,11 @@ public:
 	void set_guard(const Callable &p_guard_callable);
 	void clear_guard();
 
-	void set_on_enter_actions(const TypedArray<Action> &on_enter_actions);
+	void set_on_enter_actions(const TypedArray<Action> &new_actions);
 	TypedArray<Action> get_on_enter_actions() const { return on_enter_actions; }
+
+	void set_on_exit_actions(const TypedArray<Action> &new_actions);
+	TypedArray<Action> get_on_exit_actions() const { return on_exit_actions; }
 
 	LimboState();
 };
